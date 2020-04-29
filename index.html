@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<!-- startPage -->
+<div id="startPage" class="text-center"> 
+    <p class="display-3 text-center m-5 ">Code Quiz</p>
+    <button class="btn btn-primary" id='start'>Start Quiz</button>
+
+</div>
+
+<!-- Questions -->
+<div id='questionContainer' style="display:none">
+    <p</p>
+    <p id="question" class="display-3 text-center m-5 "></p>
+    <!-- List -->
+    <div class="list-group" id="answerList">
+        <button id="selectAnswer" type="button" class="list-group-item list-group-item-action active" disabled>Select your answer below</button>
+        <button id="answer1" type="button" class="list-group-item list-group-item-action"></button>
+        <button id="answer2" type="button" class="list-group-item list-group-item-action"></button>
+        <button id="answer3" type="button" class="list-group-item list-group-item-action"></button>
+        <button id="answer4" type="button" class="list-group-item list-group-item-action"></button>
+      </div>
+</div>
+
+<!-- Time Expired -->
+<div id="timeExpired" class="text-center" style="display:none"> 
+    <p class="display-3 text-center m-5 ">Time Expired</p>
+    <p class="display-4 text-center m-5 ">idiot</p>
+</div>
+
+<!-- Timer Display -->
+<div>
+      <p class="h4 text-center m-4" id="timer"></p>
+</div>
+
+<!-- Game Complete -->
+<div id="gameComplete" class="text-center" style="display:none"> 
+    <p id='score' class="display-4 text-center m-5 "></p>
+    <form action="" id="scoreboard">
+    <input id='initials' class="text-center m-1 "></input>
+    <button type="submit" id="saveScore">Save your score</button>
+    </form>
+</div>
+
+
+<!-- save button -->
+    <!-- locally stores score and player initials -->
+
+
+<script>
+
+
+    // pull from array
+
+   
+   
+    // Start Button Actions
+        // DONE Starts timer
+        // DONE Hide startPage div
+        // DONE Display Question div
+     
+    let score = 0;
+    let initialTime = 60000;
+    let timeRemaining = initialTime/1000;
+    
+    
+    document.getElementById('start').addEventListener('click', function() {
+
+        // Starts Timer
+        setTimeout( function() { 
+                console.log("Timer Started") 
+            }, initialTime);
+
+
+        let countDown = setInterval( function () {
+            timeRemaining -= 1;
+            document.getElementById('timer').textContent = `Time left: ${timeRemaining}`;
+            if(timeRemaining <= 0) {
+                document.getElementById('questionContainer').style.display = 'none';
+                document.getElementById('timeExpired').style.display = 'block';
+                document.getElementById('timer').style.display = 'none';
+                clearInterval(countDown);
+            }
+        }, 1000);
+        
+
+
+        // Hide startPage div
+        document.getElementById('startPage').style.display = 'none';
+        
+        // Display Question div
+        document.getElementById('questionContainer').style.display = 'block';
+
+
+        // Populate Questions
+            master();
+
+        // Live refresh progressbar
+        // setInterval( function() {
+        //     // is time remaining live updating?
+        //     document.getElementById('progressBar').style.width=progressBarConvert
+        //     console.log(timeRemaining)
+            
+        // }, 10)
+
+        });
+
+
+
+        let question1 = {
+            question: 'Quintons Favorite Word',
+            answer1: 'Beef',
+            answer2: 'Chihuahua',
+            answer3: 'Hotdog',
+            answer4: 'Theese',
+        };
+        
+        let question2 = {
+            question: 'Boolean Means',
+            answer1: 'Bowling',
+            answer2: 'True/False',
+            answer3: '0',
+            answer4: 'Hotdog'
+        };   
+        
+        let question3 = {
+            question: 'What does JSON.stringify do',
+            answer1: 'Strings two object together',
+            answer2: 'Turns String into Object',
+            answer3: 'Hotdog',
+            answer4: 'Turns object into string'
+        };
+
+    // Answer 2 default correct
+        let answerKey = [question1.answer3, question2.answer2, question3.answer4];
+        
+    // Array
+        let questions = [question1, question2, question3];
+        
+
+    // Keeps track of which question we are on
+        let activeQuestion = 0;
+
+            
+            // if answer is correct go to next
+            // if answer is wrong dont do anything
+
+
+    // Function to 
+        // DONE populate choices in html
+        // DONE check right/wrong
+        // DONE If right go to next question
+        function master() {
+
+            document.getElementById('question').innerHTML = `${questions[activeQuestion].question}`;
+            document.getElementById('answer1').innerHTML = `${questions[activeQuestion].answer1}`;
+            document.getElementById('answer2').innerHTML = `${questions[activeQuestion].answer2}`;
+            document.getElementById('answer3').innerHTML = `${questions[activeQuestion].answer3}`;
+            document.getElementById('answer4').innerHTML = `${questions[activeQuestion].answer4}`;
+
+
+            // Click
+                document.getElementById('answerList').addEventListener('click', function() {
+                    let userSelection = event.target.innerHTML;
+                    let wereTheyCorrect = (userSelection == answerKey[activeQuestion]);
+
+                        if (wereTheyCorrect && activeQuestion < (questions.length-1)) {
+                            ++activeQuestion;
+                            timeRemaining += 10;
+                            master()
+                            }
+
+                        else if (wereTheyCorrect && activeQuestion === (questions.length-1)) {
+                            timeRemaining += 10;
+                            document.getElementById('gameComplete').style.display='block';
+                            document.getElementById('questionContainer').style.display='none';
+                            document.getElementById('timer').style.display='none';
+                        
+                        }
+                        else 
+                            timeRemaining -= 10;
+                            
+                            
+
+                });
+            
+            document.getElementById('score').textContent = `Your Score: ${timeRemaining}`;
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        document.getElementById('saveScore').addEventListener('click', function() {
+        let userInitials = document.getElementById('initials').value;
+        let highScore = document.getElementById('score').textContent;
+
+        localStorage.setItem("initials", userInitials);
+        localStorage.setItem("score", highScore);
+        });
+
+
+
+// WHEN I answer a question incorrectly
+    // THEN time is subtracted from the clock
+
+// WHEN all questions are answered or the timer reaches 0
+    // THEN the game is over
+
+// WHEN the game is over
+    // THEN I can save my initials and score
+
+
+
+
+
+
+</script>
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+</html>
